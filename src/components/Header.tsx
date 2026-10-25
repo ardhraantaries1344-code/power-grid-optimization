@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Network, RotateCcw, ExternalLink, Activity } from 'lucide-react'
 import { useScada } from '../store/scadaStore'
-import { checkBackendHealth, fetchLiveTelemetry } from '../services/api'
+import { checkBackendHealth } from '../services/api'
 
 export default function Header({ searchRef }: { searchRef: React.RefObject<((q: string) => void) | null> }) {
   const { telemetry, reset } = useScada()
   const { totalGen, totalLoad, deficit, totalCapexLakhs } = telemetry
   const [backendOnline, setBackendOnline] = useState<boolean>(false)
-  const [frequency, setFrequency] = useState<number>(50.000)
 
   useEffect(() => {
     let isMounted = true
@@ -15,18 +14,6 @@ export default function Header({ searchRef }: { searchRef: React.RefObject<((q: 
     const pollStatus = async () => {
       const isUp = await checkBackendHealth()
       if (isMounted) setBackendOnline(isUp)
-
-      if (isUp) {
-        const live = await fetchLiveTelemetry()
-        if (isMounted && live) {
-          setFrequency(live.frequency_hz)
-        }
-      } else {
-        // Fallback simulation fluctuation
-        if (isMounted) {
-          setFrequency(+(50.0 + (Math.random() * 0.04 - 0.02)).toFixed(3))
-        }
-      }
     }
 
     pollStatus()
@@ -47,12 +34,8 @@ export default function Header({ searchRef }: { searchRef: React.RefObject<((q: 
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-sm font-extrabold tracking-wider uppercase text-white font-mono">
-              ERNAKULAM <span className="text-emerald-400">GRAPH-OPTIMIZER</span>
+              POWER TRANSMISSION <span className="text-emerald-400">NETWORK OPTIMIZER</span>
             </h1>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-semibold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              MITS KOCHI • {frequency.toFixed(3)} Hz
-            </span>
 
             {/* FastAPI Status Pill */}
             {backendOnline ? (
@@ -76,7 +59,6 @@ export default function Header({ searchRef }: { searchRef: React.RefObject<((q: 
               </span>
             )}
           </div>
-          <p className="text-[11px] text-slate-400">Power Grid SCADA & Optimization Suite (Ernakulam District)</p>
         </div>
       </div>
 

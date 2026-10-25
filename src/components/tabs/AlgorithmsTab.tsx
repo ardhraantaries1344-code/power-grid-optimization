@@ -19,23 +19,23 @@ import {
 } from '../../services/api'
 
 const ALGO_OPTIONS: { value: AlgoType; label: string }[] = [
-  { value: 'dijkstra', label: "1. Dijkstra's Shortest Path (Distance / Cost Weighted)" },
-  { value: 'mst',      label: '2. Minimum Spanning Tree (MST - Kruskal Capex Minimizer)' },
-  { value: 'maxflow',  label: '3. Ford–Fulkerson Algorithm (Maximum Flow in MW)' },
-  { value: 'bfs_dfs',  label: '4. BFS / DFS Connectivity & Reachability' },
-  { value: 'tarjan',   label: "5. Tarjan's Algorithm (Bridges & Articulation Points)" },
-  { value: 'cycles',   label: '6. Undirected Cycle Detection (Ring Bus Redundancy)' },
-  { value: 'mincut',   label: '7. Minimum Cut Bottleneck Analysis' },
+  { value: 'dijkstra', label: 'Find the shortest or lowest-cost route' },
+  { value: 'mst',      label: 'Connect all facilities at the lowest cost' },
+  { value: 'maxflow',  label: 'Find how much power can be transferred' },
+  { value: 'bfs_dfs',  label: 'Check which facilities are connected' },
+  { value: 'tarjan',   label: 'Find critical lines and substations' },
+  { value: 'cycles',   label: 'Find backup routes in the network' },
+  { value: 'mincut',   label: 'Find lines that limit power transfer' },
 ]
 
 const ALGO_DESC: Record<AlgoType, string> = {
-  dijkstra: "Finds the optimal path between substations using Distance (km) or CAPEX Cost (₹ Lakhs) as weights.",
-  mst:      "Kruskal MST identifies the minimum-cost connection tree linking all facilities without redundant loops.",
-  maxflow:  "Ford–Fulkerson (Edmonds–Karp) calculates maximum MW transfer from Source to Destination.",
-  bfs_dfs:  "BFS/DFS traversal examines network connectivity and isolates blackout islands.",
-  tarjan:   "Tarjan's finds critical transmission bridges and articulation substations (N-1 single points of failure).",
-  cycles:   "Cycle Detection identifies closed ring buses that provide backup feeding redundancy.",
-  mincut:   "Min-Cut identifies bottleneck lines whose removal completely partitions Source and Destination.",
+  dijkstra: "Show the best route between the selected locations by distance or estimated cost.",
+  mst:      "Show the lowest-cost set of connections that links all facilities.",
+  maxflow:  "Estimate the maximum power that can move from the selected source to the destination.",
+  bfs_dfs:  "Check which facilities can be reached through the connected network.",
+  tarjan:   "Highlight lines and substations whose failure could disconnect parts of the network.",
+  cycles:   "Show closed-loop connections that can provide an alternate supply route.",
+  mincut:   "Identify the lines that restrict power transfer between the selected locations.",
 }
 
 export default function AlgorithmsTab() {
@@ -224,7 +224,7 @@ export default function AlgorithmsTab() {
 
       {/* Algorithm Selector */}
       <div>
-        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Select Graph Algorithm</label>
+        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400">What would you like to do?</label>
         <select value={algo} onChange={e => setAlgo(e.target.value as AlgoType)}
           className="w-full mt-1.5 bg-slate-950 border border-slate-700/80 rounded-lg p-2.5 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none text-slate-100">
           {ALGO_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -234,7 +234,7 @@ export default function AlgorithmsTab() {
       {/* Description */}
       <div className="p-3 bg-emerald-950/25 border border-emerald-800/40 rounded-xl space-y-1">
         <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
-          <Info className="w-3.5 h-3.5" /> Algorithm Objective:
+          <Info className="w-3.5 h-3.5" /> What this does:
         </div>
         <p className="text-[11px] text-slate-300 leading-relaxed">{ALGO_DESC[algo]}</p>
       </div>
@@ -247,7 +247,7 @@ export default function AlgorithmsTab() {
           className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 disabled:opacity-50"
         >
           <Play className="w-4 h-4 fill-current" />
-          {loading ? 'Solving via Graph Engine...' : 'Compute Selected Algorithm'}
+          {loading ? 'Analyzing network...' : 'Run analysis'}
         </button>
         <button
           onClick={() => {
